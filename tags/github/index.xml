@@ -1,41 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>A-Motion 2.0</title>
-    <link>https://bluestar714.github.io/</link>
-    <description>Recent content on A-Motion 2.0</description>
+    <title>github on A-Motion 2.0</title>
+    <link>https://bluestar714.github.io/tags/github/</link>
+    <description>Recent content in github on A-Motion 2.0</description>
     <generator>Hugo -- gohugo.io</generator>
-    <copyright>Copyright © 2008–2018, Steve Francia and the Hugo Authors; all rights reserved.</copyright><atom:link href="https://bluestar714.github.io/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>About</title>
-      <link>https://bluestar714.github.io/about/</link>
-      <pubDate>Mon, 28 Sep 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://bluestar714.github.io/about/</guid>
-      <description>Profile Robotics Engineer, System Software Engineer, 2016年 慶應義塾大学 環境情報学部卒業, IoTにて用いられるエッジデバイスや物流にて利用される識別子, 短距離無線通信, システムの研究に携わる.
-卒業後は米仮想化ソフトウェアに入社.
-ハイパバイザやオンプレミスクラウド構築ソフト, システム環境監視ソフトについての業務に従事.
-エンジニアリング業務以外にオフィシャルノベルティデザイン業務なども経験.
-2019年にロボットスタートアップにジョイン.
-ロボット状態管理ソフトの開発やロボットシステムを設計,開発業務に従事.
-ロボットの自律走行実証実験を成功させる.
-2020年にロボットスタートアップを創業.様々な技術を組み合わせて人手不足やそれに伴う苦痛を解決できるよう活動しております.
-Origin 白井智洋(Tomohiro Shirai), 1992年, 家族の都合で神奈川に生まれる.
-大学まで神奈川で育つ.特技はテニスとスキー.
-度々,Spyder F3-Sというトライクに乗っています.
-技術としてはカーネル周りが他より好き.動けば何でも楽しい気もする.
-カレーと餃子が好き.最近はラーメンも.</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://bluestar714.github.io/archives/</link>
-      <pubDate>Tue, 28 May 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://bluestar714.github.io/archives/</guid>
-      <description></description>
-    </item>
-    
+    <copyright>Copyright © 2008–2018, Steve Francia and the Hugo Authors; all rights reserved.</copyright><atom:link href="https://bluestar714.github.io/tags/github/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>github pagesとhugoで簡単blog作成</title>
       <link>https://bluestar714.github.io/post/post1/</link>

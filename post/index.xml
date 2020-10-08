@@ -7,12 +7,24 @@
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright © 2008–2018, Steve Francia and the Hugo Authors; all rights reserved.</copyright><atom:link href="https://bluestar714.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Archive</title>
-      <link>https://bluestar714.github.io/post/rich-content/</link>
+      <title>github pagesとhugoで簡単blog作成</title>
+      <link>https://bluestar714.github.io/post/post1/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://bluestar714.github.io/post/rich-content/</guid>
-      <description>No entry</description>
+      <guid>https://bluestar714.github.io/post/post1/</guid>
+      <description>動機 2020年の年始にこれまでの人生を振り返ってみたところ,「これまでoutputあんまりしてなかったなぁ」と気がついたのと, 個人的には2019年, 2020年は割と人生のイベントも多く, 「思い出の記録というのは大事だなぁ」と思ったりもしたので始めました.
+正直, サーバ借りてドメイン取ってアプリケーションサイドのインフラで遊ぼうとも思っていたのですが, お金をあまりかけられない事情が発生したので, 無料っていいなと思ったのでgithub pagesを選びました. 辛みだね.
+github pages github pageというものがあり, githubが提供している.
+repository毎にweb pageが簡単に作れて差分管理もできる.
+作った製品のデモページを置いたりするのにも使えて便利です.
+今回はユーザサイトを作る心づもりです.
+https://pages.github.com/
+1Hosted directly from your GitHub repository. Just edit, push, and your changes are live. hugo webサイトを構築するためのフレームワーク. 早いらしい. 確かに早い気がする.
+全てが面倒に感じ始め, wordpressで良いかと思っていたところ, 早くてカスタマイズもできてテンプレートも多いこいつに出会った.
+マークダウン使えて便利だね.webサーバ機能が大変便利.
+hugoの使い方や学びはまた今度書こうかなと.
+https://gohugo.io/
+1Hugo is one of the most popular open-source static site generators. With its amazing speed and flexibility, Hugo makes building websites fun again. 導入手順 1. hugo をインストール 以下の手順でインストールとサイトの作成を実施.</description>
     </item>
     
   </channel>
