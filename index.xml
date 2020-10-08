@@ -2,16 +2,16 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>A-Motion 2.0</title>
-    <link>https://bluestar714.github.io//</link>
+    <link>https://bluestar714.github.io/</link>
     <description>Recent content on A-Motion 2.0</description>
     <generator>Hugo -- gohugo.io</generator>
-    <copyright>Copyright © 2008–2018, Steve Francia and the Hugo Authors; all rights reserved.</copyright><atom:link href="https://bluestar714.github.io//index.xml" rel="self" type="application/rss+xml" />
+    <copyright>Copyright © 2008–2018, Steve Francia and the Hugo Authors; all rights reserved.</copyright><atom:link href="https://bluestar714.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>About</title>
-      <link>https://bluestar714.github.io//about/</link>
+      <link>https://bluestar714.github.io/about/</link>
       <pubDate>Mon, 28 Sep 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://bluestar714.github.io//about/</guid>
+      <guid>https://bluestar714.github.io/about/</guid>
       <description>Profile Robotics Engineer, System Software Engineer, 2016年 慶應義塾大学 環境情報学部卒業, IoTにて用いられるエッジデバイスや物流にて利用される識別子, 短距離無線通信, システムの研究に携わる.
 卒業後は米仮想化ソフトウェアに入社.
 ハイパバイザやオンプレミスクラウド構築ソフト, システム環境監視ソフトについての業務に従事.
@@ -29,19 +29,19 @@ Origin 白井智洋(Tomohiro Shirai), 1992年, 家族の都合で神奈川に生
     
     <item>
       <title></title>
-      <link>https://bluestar714.github.io//archives/</link>
+      <link>https://bluestar714.github.io/archives/</link>
       <pubDate>Tue, 28 May 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://bluestar714.github.io//archives/</guid>
+      <guid>https://bluestar714.github.io/archives/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Archive</title>
-      <link>https://bluestar714.github.io//post/rich-content/</link>
+      <link>https://bluestar714.github.io/post/rich-content/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://bluestar714.github.io//post/rich-content/</guid>
+      <guid>https://bluestar714.github.io/post/rich-content/</guid>
       <description>No entry</description>
     </item>
     
