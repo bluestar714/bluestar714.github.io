@@ -6,7 +6,7 @@
 const doc = document.documentElement;
 const inline = ":inline";
 // variables read from your hugo configuration
-const parentURL = 'https://bluestar714.github.io/';
+const parentURL = 'https://bluestar714.github.io';
 let showImagePosition = "false";
 
 const showImagePositionLabel = 'Figure';
@@ -515,7 +515,7 @@ function disableCodeLineNumbers(block){
     let isModeToggle = containsClass(target, modeClass);
     if(isModeToggle) {
       pushClass(target, animateClass);
-      setUserColorMode(true);        
+      setUserColorMode(false);        
     }
   });
 })();
