@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en" data-figures="" class="page">
+  <head>  <title>GCP上にSoftEtherを用いてVPN環境を構築 | A-Motion 2.0</title>
+  <meta charset='utf-8'>
+  <meta name="generator" content="Hugo 0.76.3" />
+  <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+  <meta http-equiv = 'X-UA-Compatible' content = 'IE=edge'>
+<script async src="https://www.googletagmanager.com/gtag/js?id=XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'XXXXXXXXXX');
+</script>
+  
+<meta property = "og:locale" content = "en_US" />
+<meta property="og:type" content="article">
+<meta name="description" content="vpn構築">
+<meta name = "twitter:card" content = "summary" />
+<meta name = "twitter:creator" content = "@ichiro_doo">
+<meta name = "twitter:title" content = "GCP上にSoftEtherを用いてVPN環境を構築" />
+<meta property = "og:url" content = "https://bluestar714.github.io/post/201104/" />
+<meta property = "og:title" content = "GCP上にSoftEtherを用いてVPN環境を構築" />
+<meta property = "og:description" content = "vpn構築" />
+<meta property = "og:image" content = "https://bluestar714.github.io/images/building.png" />
+<link rel='apple-touch-icon' sizes='180x180' href='https://bluestar714.github.io/icons/icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='https://bluestar714.github.io/icons/icon.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='https://bluestar714.github.io/icons/icon.png'>
+<link rel='manifest' href='https://bluestar714.github.io/icons/site.webmanifest'>
+<link rel="mask-icon" href= 'https://bluestar714.github.io/safari-pinned-tab.svg' color="#002538">
+<meta name="msapplication-TileColor" content="#002538">
+<meta name="theme-color" content="#002538">
+
+  <link rel='canonical' href='https://bluestar714.github.io/post/201104/'>
+
+    
+
+    
+    <link rel="preload" href="https://bluestar714.github.io/css/styles.911db35c8e306d717b4098e7a4f14096bbc15388e4c04e8b7e7809a9d1dd2820d178edba6928d1cbfa82083bd2263626853f300038e96a7dc6284ace1dfdcdc9.css" integrity = "sha512-kR2zXI4wbXF7QJjnpPFAlrvBU4jkwE6LfngJqdHdKCDReO26aSjRy/qCCDvSJjYmhT8wADjpan3GKErOHf3NyQ==" as="style" crossorigin="anonymous">
+    <link rel="preload" href="https://bluestar714.github.io/js/bundle.54a378827d9fe7c301b088bb011e21ae213f46838fb0f78bbd53fa7b0c9f813f96e578b1f21ac8f2d5ad8f6f331a3efe46cf018e4cff78d3f8c78b0c13ded597.js" as="script" integrity=
+    "sha512-VKN4gn2f58MBsIi7AR4hriE/RoOPsPeLvVP6ewyfgT&#43;W5Xix8hrI8tWtj28zGj7&#43;Rs8Bjkz/eNP4x4sME97Vlw==" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" type="text/css" href="https://bluestar714.github.io/css/styles.911db35c8e306d717b4098e7a4f14096bbc15388e4c04e8b7e7809a9d1dd2820d178edba6928d1cbfa82083bd2263626853f300038e96a7dc6284ace1dfdcdc9.css" integrity="sha512-kR2zXI4wbXF7QJjnpPFAlrvBU4jkwE6LfngJqdHdKCDReO26aSjRy/qCCDvSJjYmhT8wADjpan3GKErOHf3NyQ==" crossorigin="anonymous">
+	  
+  </head>
+  
+  
+  
+    
+  
+  <body data-code="7" data-lines="true" id="documentTop">
+
+<header class = 'nav_header' >
+  <nav class = 'nav'>
+    <a href='https://bluestar714.github.io' class = 'nav_brand nav_item nav_hide'>
+      <img src="https://bluestar714.github.io/logos/logo.png" class="logo">
+      <div class = 'nav_close'>
+        <svg class="icon">
+          <use xlink:href="#open-menu"></use>
+        </svg>
+        <svg class="icon">
+          <use xlink:href="#closeme"></use>
+        </svg>
+      </div>
+    </a>
+    <div class = 'nav_body nav_body_left'>
+      <div class = 'nav_parent'>
+        <a href = 'https://bluestar714.github.io/' class = 'nav_item'>Home </a>
+      </div>
+      <div class = 'nav_parent'>
+        <a href = 'https://bluestar714.github.io' class = 'nav_item'>Links <img src= https://bluestar714.github.io/icons/caret-icon.svg alt="icon" class="nav_icon"></a>
+        <div class = 'nav_sub'>
+          <a href = 'https://github.com/bluestar714' class = 'nav_child nav_item'>Github</a>
+          <a href = 'https://twitter.com/ichiro_doo' class = 'nav_child nav_item'>Twitter</a>
+        </div>
+      </div>
+      <div class = 'nav_parent'>
+        <a href = 'https://bluestar714.github.io/about/' class = 'nav_item'>About </a>
+      </div>
+      <a href='https://bluestar714.github.io' class = 'nav_brand nav_center nav_item'>
+        <img src="https://bluestar714.github.io/logos/logo.png" class="logo">
+      </a>
+<div class='follow'>
+  <a href='https://github.com/bluestar714'>
+    <svg class="icon">
+      <use xlink:href="#github"></use>
+    </svg>
+  </a>
+  <a href='https://twitter.com/ichiro_doo'>
+    <svg class="icon">
+      <use xlink:href="#twitter"></use>
+    </svg>
+  </a>
+  
+  <a href='https://bluestar714.github.io/index.xml'>
+    <svg class="icon">
+      <use xlink:href="#rss"></use>
+    </svg>
+  </a>
+<div class = 'color_mode'>
+	
+</div>
+
+</div>
+
+    </div>
+  </nav>
+</header>
+
+    <main>
+  
+<div class = 'grid-inverse wrap content'>
+  <article class='post_content'>
+    <h1 class='post_title'>GCP上にSoftEtherを用いてVPN環境を構築</h1><div class = 'post_meta'>
+  <svg class="icon">
+    <use xlink:href="#calendar"></use>
+  </svg>
+  <span class="post_date">
+    Jan 1, 0001</span>
+  <a href = 'https://bluestar714.github.io/tags/hugo' class = 'post_tag button button_translucent'>hugo
+  </a>
+  <a href = 'https://bluestar714.github.io/tags/vpn' class = 'post_tag button button_translucent'>VPN
+  </a>
+  <a href = 'https://bluestar714.github.io/tags/softether' class = 'post_tag button button_translucent'>SoftEther
+  </a>
+  <a href = 'https://bluestar714.github.io/tags/gcp' class = 'post_tag button button_translucent'>GCP
+  </a>
+  <a href = 'https://bluestar714.github.io/tags/dns' class = 'post_tag button button_translucent'>DNS
+  </a>
+  <a href = 'https://bluestar714.github.io/tags/%E3%81%8A%E5%90%8D%E5%89%8D.com' class = 'post_tag button button_translucent'>お名前.com
+  </a>
+</div>
+
+    <div class='post_share'>
+  Share on:
+  <a href="https://twitter.com/intent/tweet?text=GCP%e4%b8%8a%e3%81%abSoftEther%e3%82%92%e7%94%a8%e3%81%84%e3%81%a6VPN%e7%92%b0%e5%a2%83%e3%82%92%e6%a7%8b%e7%af%89&url=https%3a%2f%2fbluestar714.github.io%2fpost%2f201104%2f&tw_p=tweetbutton" class="twitter" title="Share on Twitter" target="_blank" rel="nofollow">
+    <svg class="icon">
+      <use xlink:href="#twitter"></use>
+    </svg>
+  </a>
+  
+  <a href="https://www.facebook.com/sharer.php?u=https%3a%2f%2fbluestar714.github.io%2fpost%2f201104%2f&t=GCP%e4%b8%8a%e3%81%abSoftEther%e3%82%92%e7%94%a8%e3%81%84%e3%81%a6VPN%e7%92%b0%e5%a2%83%e3%82%92%e6%a7%8b%e7%af%89" class="facebook" title="Share on Facebook" target="_blank" rel="nofollow">
+    <svg class="icon">
+      <use xlink:href="#facebook"></use>
+    </svg>
+  </a>
+  <script>
+    function shareViaLinkedin() {
+      window.open('http://www.linkedin.com/shareArticle?mini=true&url='+encodeURIComponent("https://bluestar714.github.io/post/201104/"), '', 'left=0,top=0,width=650,height=420,personalbar=0,toolbar=0,scrollbars=0,resizable=0');
+    }
+  </script>
+  <a href="#linkedinshare" id = "linkedinshare" class="linkedin" title="Share on LinkedIn" rel="nofollow" onclick="shareViaLinkedin()">
+    <svg class="icon">
+      <use xlink:href="#linkedin"></use>
+    </svg>
+  </a>
+  <a href="https://bluestar714.github.io/post/201104/" title="Copy Link" class="link link_yank">
+    <svg class="icon">
+      <use xlink:href="#yank"></use>
+    </svg>
+  </a>
+</div>
+
+    
+    <h1 id="動機">動機</h1>
+<p>クラウド環境ってどれも(AWSとGCP)VPN機能はあるが, どれも拠点間VPNでネットワーク機器や既存の環境を持っていない場合、使い勝手が悪いと感じていました.</p>
+<p>一方, クラウド環境にVPSを切り,環境構築を作りその上に踏み台サーバを作ってその中で何かをするのもだるいと感じたので, OpenVPNやSoftEtherを使って全てその中で完結させれば幸せになるのではと考えた次第です.</p>
+<p>(某ROS1だとネットワークセグメント分けると辛いとこあるじゃないですか. そこら辺の良きソリューションは教えていただきたいところではある.)</p>
+<h1 id="やること">やること</h1>
+<p>softehterを用いてL3 VPNをGCP上に構築する.</p>
+<h1 id="softether">SoftEther</h1>
+<p>登さんが作られたVPN ソフトウェアで, フリーで使えます.(どこかのOpenVPN ASとは大違いですわ)</p>
+<p>結構手軽に構築できます.</p>
+<p><a href="https://ja.softether.org/">https://ja.softether.org/</a></p>
+<p>オンプレだとプロミスキャスモード使ってL2 VPN作れるんですが, GCPのようなクラウドでは基本的にはプロミスキャスモードはサポートされていないとのこと.</p>
+<p>せやな.</p>
+<p>すんなり納得.</p>
+<p><a href="https://serverfault.com/questions/997756/gcp-compute-instance-nic-in-promiscuous-mode">https://serverfault.com/questions/997756/gcp-compute-instance-nic-in-promiscuous-mode</a></p>
+<h2 id="vpn-server側の準備">VPN Server側の準備</h2>
+<h2 id="インスタンスの生成">インスタンスの生成</h2>
+<ol>
+<li>GCPにてプロジェクトを用意</li>
+<li>[Compute Engine] -&gt; [VM インスタンス]内の&quot;インスタンスを作成&quot;をクリック</li>
+<li>External IPをStaticなものを確保</li>
+<li>お名前.comやRoute 53, Cloud DNS等でAレコードで雑に登録(<a href="http://%E4%BB%8A%E5%9B%9E%E3%81%AF%E3%81%8A%E5%90%8D%E5%89%8D.com">今回はお名前.com</a>)</li>
+</ol>
+<h2 id="ファイヤウォールの設定">ファイヤウォールの設定</h2>
+<p>TCPで使用するport 番号を通すポリシを設定する.</p>
+<p>今回はTCPの5555を開放した.(雑)</p>
+<h2 id="softetherの設定">SoftEtherの設定</h2>
+<h3 id="インストール">インストール</h3>
+<p>下準備です.</p>
+<p>software-commonとかでも良さげ.</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln"> 1</span>$ yum --enablerepo=epel          
+<span class="ln"> 2</span>      --downloadonly             
+<span class="ln"> 3</span>      --downloaddir=.           
+<span class="ln"> 4</span>      install                    
+<span class="ln"> 5</span>      gcc                        
+<span class="ln"> 6</span>      gcc-c++                    
+<span class="ln"> 7</span>      glibc                      
+<span class="ln"> 8</span>      make                       
+<span class="ln"> 9</span>      binutils                   
+<span class="ln">10</span>      zlib                       
+<span class="ln">11</span>      openssl                    
+<span class="ln">12</span>      readline                   
+<span class="ln">13</span>      ncurses                    
+<span class="ln">14</span>      zlib-devel                 
+<span class="ln">15</span>      openssl-devel              
+<span class="ln">16</span>      readline-devel             
+<span class="ln">17</span>      ncurses-devel              
+<span class="ln">18</span>      psmisc                     
+</code></pre></div><p>以下のコマンドでSoftEtherのvpn server側のソフトをダウンロードします.</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln">1</span>  $ sudo wget https://jp.softether-download.com/files/softether/v4.34-9745-rtm-2020.04.05-tree/Linux/SoftEther_VPN_Server/64bit_-_Intel_x64_or_AMD64/softether-vpnserver-v4.34-9745-rtm-2020.04.05-linux-x64-64bit.tar.gz
+<span class="ln">2</span>
+<span class="ln">3</span>$ tar zxvf softether-vpnserver-v4.34-9745-rtm-2020.04.05-linux-x64-64bit.tar.gz
+</code></pre></div><p>以下のコマンドでビルドします。</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln">1</span>$ cd vpnserver/
+<span class="ln">2</span>
+<span class="ln">3</span>$ make
+</code></pre></div><p>各種コマンドを権限を設定.</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln">1</span>$ sudo mv vpnserver   /usr/local/
+<span class="ln">2</span>$ cd /usr/local/vpnserver/
+<span class="ln">3</span>$ sudo chmod 600 *
+<span class="ln">4</span>$ sudo chmod 700 vpncmd
+<span class="ln">5</span>$ sudo chmod 700 vpnserver
+<span class="ln">6</span>$ sudo chown -R root:root *
+</code></pre></div><h3 id="heading"></h3>
+<p>systemdにて操作可能設定にします.</p>
+<p>上の手順に書いた/usr/local/にvpnserverを配置していることを前提としています.</p>
+<p>しかし, /usr/local/にソフトを置くのはunix原理主義者感がある.</p>
+<p>以下のサイトにパスについて<a href="https://linuc.org/study/knowledge/544/">https://linuc.org/study/knowledge/544/</a>よくまとまっています.</p>
+<p>「/bin」「/usr/bin」「/usr/local/bin」ディレクトリの使い分け</p>
+<p><a href="https://linuc.org/study/knowledge/544/">https://linuc.org/study/knowledge/544/</a></p>
+<p>UNIX系OSのディレクトリ構造表(CentOS 7.3)</p>
+<p><a href="https://qiita.com/uhooi/items/c1388f8d803641bfb8f3">https://qiita.com/uhooi/items/c1388f8d803641bfb8f3</a></p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln"> 1</span>$ sudo vi /etc/systemd/system/vpnserver.service
+<span class="ln"> 2</span>
+<span class="ln"> 3</span>[Unit]
+<span class="ln"> 4</span>Description=ichiro&#39;s softether vpn server
+<span class="ln"> 5</span>After=network.target network-online.target
+<span class="ln"> 6</span>
+<span class="ln"> 7</span>[Service]
+<span class="ln"> 8</span>Type=forking
+<span class="ln"> 9</span>ExecStart=/usr/local/vpnserver/vpnserver start
+<span class="ln">10</span>ExecStop=/usr/local/vpnserver/vpnserver stop
+<span class="ln">11</span>
+<span class="ln">12</span>[Install]
+<span class="ln">13</span>WantedBy=multi-user.target                       
+</code></pre></div><p>このserviceファイルには複数セクションがあり,今回使ったものは以下です.</p>
+<h3 id="unit-セクション">Unit セクション</h3>
+<ul>
+<li>Description: 説明などを書く</li>
+<li>After: サービスの依存関係.ここではnetworkとnetwork-onlineのターゲットユニット.</li>
+</ul>
+<p>複数のサービス(ユニット)をまとめたものがターゲットユニットです.</p>
+<h3 id="service-セクション">Service セクション</h3>
+<ul>
+<li>Type: 実行コマンドとメインプロセスをどのように扱うかについて.　</li>
+</ul>
+<p>forkingは起動完了の判定がコマンド終了時となる.</p>
+<ul>
+<li>ExecStart: スタート時の実行コマンドを書く</li>
+<li>ExecStop: ストップ時の実行コマンドを書く</li>
+</ul>
+<h3 id="install-セクション">Install セクション</h3>
+<ul>
+<li>WantedBy: 実質ランレベルの指定.</li>
+</ul>
+<p>.wantsディレクトリに今回ではmulti-user.target.wantsのような<a href="http://multi-user.target">multi-user.target</a>(ランレベル 3)に対するシンボリックリンクが作成される.</p>
+<h2 id="vpnserver起動と設定">VPNServer起動と設定</h2>
+<p>以下にてVPN Serverを起動.</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln">1</span>$ systemctl daemon-reload
+<span class="ln">2</span>$ systemctl restart vpnserver.service
+</code></pre></div><p>以下にて環境をチェック.</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln"> 1</span> $ ./vpncmd 
+<span class="ln"> 2</span>./vpncmd
+<span class="ln"> 3</span>vpncmd command - SoftEther VPN Command Line Management Utility
+<span class="ln"> 4</span>SoftEther VPN Command Line Management Utility (vpncmd command)
+<span class="ln"> 5</span>Version 4.20 Build 9608   (English)
+<span class="ln"> 6</span>Compiled 2016/04/17 21:59:35 by yagi at pc30
+<span class="ln"> 7</span>Copyright (c) SoftEther VPN Project. All Rights Reserved.
+<span class="ln"> 8</span>
+<span class="ln"> 9</span>By using vpncmd program, the following can be achieved. 
+<span class="ln">10</span>
+<span class="ln">11</span>1. Management of VPN Server or VPN Bridge 
+<span class="ln">12</span>2. Management of VPN Client
+<span class="ln">13</span>3. Use of VPN Tools (certificate creation and Network Traffic Speed Test Tool)
+<span class="ln">14</span>
+<span class="ln">15</span>Select 1, 2 or 3: 3
+<span class="ln">16</span>
+<span class="ln">17</span>VPN Tools has been launched. By inputting HELP, you can view a list of the commands that can be used.
+<span class="ln">18</span>
+<span class="ln">19</span>VPN Tools&gt;check
+<span class="ln">20</span>Check command - Check whether SoftEther VPN Operation is Possible
+<span class="ln">21</span>---------------------------------------------------
+<span class="ln">22</span>SoftEther VPN Operation Environment Check Tool
+<span class="ln">23</span>
+<span class="ln">24</span>Copyright (c) SoftEther VPN Project.
+<span class="ln">25</span>All Rights Reserved.
+<span class="ln">26</span>
+<span class="ln">27</span>If this operation environment check tool is run on a system and that system passes, it is most likely that SoftEther VPN software can operate on that system. This check may take a while. Please wait...
+<span class="ln">28</span>
+<span class="ln">29</span>Checking &#39;Kernel System&#39;... 
+<span class="ln">30</span>              Pass
+<span class="ln">31</span>Checking &#39;Memory Operation System&#39;... 
+<span class="ln">32</span>              Pass
+<span class="ln">33</span>Checking &#39;ANSI / Unicode string processing system&#39;... 
+<span class="ln">34</span>              Pass
+<span class="ln">35</span>Checking &#39;File system&#39;... 
+<span class="ln">36</span>              Pass
+<span class="ln">37</span>Checking &#39;Thread processing system&#39;... 
+<span class="ln">38</span>              Pass
+<span class="ln">39</span>Checking &#39;Network system&#39;... 
+<span class="ln">40</span>              Pass
+<span class="ln">41</span>
+<span class="ln">42</span>All checks passed. It is most likely that SoftEther VPN Server / Bridge can operate normally on this system.
+<span class="ln">43</span>
+<span class="ln">44</span>The command completed successfully.
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln"> 1</span> $ ./vpncmd 
+<span class="ln"> 2</span>vpncmd command - SoftEther VPN Command Line Management Utility
+<span class="ln"> 3</span>SoftEther VPN Command Line Management Utility (vpncmd command)
+<span class="ln"> 4</span>Version 4.20 Build 9608   (English)
+<span class="ln"> 5</span>Compiled 2016/04/17 21:59:35 by yagi at pc30
+<span class="ln"> 6</span>Copyright (c) SoftEther VPN Project. All Rights Reserved.
+<span class="ln"> 7</span>
+<span class="ln"> 8</span>By using vpncmd program, the following can be achieved. 
+<span class="ln"> 9</span>
+<span class="ln">10</span>1. Management of VPN Server or VPN Bridge 
+<span class="ln">11</span>2. Management of VPN Client
+<span class="ln">12</span>3. Use of VPN Tools (certificate creation and Network Traffic Speed Test Tool)
+<span class="ln">13</span>
+<span class="ln">14</span>Select 1, 2 or 3: 1
+</code></pre></div><p>仮想HUBの作成</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln">1</span>&gt; HubCreate NEWHUBNAME
+</code></pre></div><p>ユーザの作成</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln">1</span>&gt; UserCreate USERNAME
+</code></pre></div><p>ユーザのパスワード作成</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln">1</span>&gt; UserPasswordSet USERNAME
+</code></pre></div><h3 id="secure-nat設定">Secure NAT設定</h3>
+<p>Windows にはSoftEther VPN Server ManagerというGUIで設定できる便利なやつがいる.</p>
+<p>./vpncmdでも設定可能.</p>
+<p>以下のコマンドでSecureNATを設定.</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln">1</span>&gt; DhcpGet
+<span class="ln">2</span>&gt; DhcpEnable
+<span class="ln">3</span>&gt; SecureNatEnable 
+</code></pre></div><p>正直SoftEther VPN Server Managerでは説明が必要ないほど整ったGUI環境が提供されている.</p>
+<h2 id="client側設定">Client側設定</h2>
+<p>ubuntu 18.04に入れました.</p>
+<p>手順はvpnserverと大体同じ.</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln"> 1</span>$ wgethttps://jp.softether-download.com/files/softether/v4.34-9745-rtm-2020.04.05-tree/Linux/SoftEther_VPN_Client/64bit_-_Intel_x64_or_AMD64/softether-vpnclient-v4.34-9745-rtm-2020.04.05-linux-x64-64bit.tar.gz
+<span class="ln"> 2</span>$ tar xxvf softether-vpnclient-v4.34-9745-rtm-2020.04.05-linux-x64-64bit.tar.gz
+<span class="ln"> 3</span>
+<span class="ln"> 4</span>$ cd vpnclient
+<span class="ln"> 5</span>$ make
+<span class="ln"> 6</span>
+<span class="ln"> 7</span>$ sudo mv vpnserver   /usr/local/
+<span class="ln"> 8</span>$ cd /usr/local/vpnclient/
+<span class="ln"> 9</span>$ sudo chmod 600 *
+<span class="ln">10</span>$ sudo chmod 700 vpncmd
+<span class="ln">11</span>$ sudo chmod 700 vpnclient
+<span class="ln">12</span>$ sudo chown -R root:root *
+</code></pre></div><p>systemdの設定を以下に実施.</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln"> 1</span>$ $ sudo vi /etc/systemd/system/vpnclient.service
+<span class="ln"> 2</span>
+<span class="ln"> 3</span>[Unit]
+<span class="ln"> 4</span>Description=ichiro&#39;s softether vpn client
+<span class="ln"> 5</span>After=network.target network-online.target
+<span class="ln"> 6</span>
+<span class="ln"> 7</span>[Service]
+<span class="ln"> 8</span>Type=forking
+<span class="ln"> 9</span>ExecStart=/usr/local/vpnclientr/vpnclient start
+<span class="ln">10</span>ExecStop=/usr/local/vpnclient/vpnclient stop
+<span class="ln">11</span>
+<span class="ln">12</span>[Install]
+<span class="ln">13</span>WantedBy=multi-user.target    
+</code></pre></div><p>例のごとくvpnclientを起動!</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln">1</span>$ systemctl daemon-reload
+<span class="ln">2</span>$ systemctl restart vpnclient.service
+</code></pre></div><p>vpncmdで環境のチェック</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln"> 1</span> $ ./vpncmd 
+<span class="ln"> 2</span>./vpncmd
+<span class="ln"> 3</span>vpncmd command - SoftEther VPN Command Line Management Utility
+<span class="ln"> 4</span>SoftEther VPN Command Line Management Utility (vpncmd command)
+<span class="ln"> 5</span>Version 4.20 Build 9608   (English)
+<span class="ln"> 6</span>Compiled 2016/04/17 21:59:35 by yagi at pc30
+<span class="ln"> 7</span>Copyright (c) SoftEther VPN Project. All Rights Reserved.
+<span class="ln"> 8</span>
+<span class="ln"> 9</span>By using vpncmd program, the following can be achieved. 
+<span class="ln">10</span>
+<span class="ln">11</span>1. Management of VPN Server or VPN Bridge 
+<span class="ln">12</span>2. Management of VPN Client
+<span class="ln">13</span>3. Use of VPN Tools (certificate creation and Network Traffic Speed Test Tool)
+<span class="ln">14</span>
+<span class="ln">15</span>Select 1, 2 or 3: 3
+<span class="ln">16</span>
+<span class="ln">17</span>&gt; check
+</code></pre></div><p>2. Management of VPN ClientにてClient側の設定</p>
+<p>以下のコマンドにてvpn用のnicを作成, アカウント作成, VPNに接続</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln">1</span>&gt; niccreate vpn
+<span class="ln">2</span>&gt; nicenable vpn
+<span class="ln">3</span>&gt; accountcreate
+<span class="ln">4</span>&gt; accountpasswordset
+<span class="ln">5</span>&gt; accountconnect
+<span class="ln">6</span>&gt; accountstartupset
+</code></pre></div><p>以下にてアカウント情報をリストできる.</p>
+<p>Connectedや接続完了となっていればOkay!</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln">1</span>&gt; accountlist
+</code></pre></div><p>以下のコマンドにてvpnserver側のDHCPサーバよりIPアドレスを取得.</p>
+<div class="highlight"><pre class="chroma"><code class="language-plain" data-lang="plain"><span class="ln">1</span>$ sudo dhclient vpn_vpn(先程作成したNIC)
+</code></pre></div><p>以上, VPNサーバが尋常ではなく手軽に作成することができます.</p>
+<p>素晴らしすぎる.</p>
+<p>最新版ではHTML 5版クライアントがついています.近々使ってみようかと思います.</p>
+<p>SecureNATにDHCPの機能があるんですが、デフォゲの情報を入れておくとpushされた情報によってクライアント側にルーティングテーブルが2つできるというツラミがあります.ネットワークさっぱりなので少しつまづきました.</p>
+<p>あと、Mac OS側ではtuntapが古くてbrewでインストールできない端末がありました。</p>
+<p>brew cleanupとか良いかもしれません。面倒なんでl2tpの設定が楽だし使いやすい.</p>
+<p>あとは時間を見つけてfirewallとIAPの設定でも書きますかね~~~~.</p>
+<p>今回はこの辺で.</p>
+
+  </article>
+<aside class="sidebar">
+  <section class="sidebar_inner">
+    <h2>Tomohiro Shirai</h2>
+    <div>
+      某仮想化ソフトウェアベンダから離脱しロボットを作り始めました。たまにトライクに乗っています。好物はカレー。
+    </div>
+    <a href = 'https://bluestar714.github.io/about/' class="button mt-1" role="button">Read More</a>
+    <h2 class="mt-4">Featured Posts</h2>
+    <ul>
+    
+    </ul>
+    <h2 class="mt-4">Recent Posts</h2>
+    <ul class="flex-column">
+      
+      <li>
+        <a href="https://bluestar714.github.io/post/post1/" class="nav-link">github pagesとhugoで簡単blog作成</a>
+      </li>
+    </ul> 
+    
+    <div>
+      <h2 class="mt-4 taxonomy" id="categories-section">categories</h2>
+      <nav class="tags_nav">
+        
+      </nav>
+    </div>
+    
+    <div>
+      <h2 class="mt-4 taxonomy" id="tags-section">tags</h2>
+      <nav class="tags_nav">
+        <a href='https://bluestar714.github.io/tags/hugo/' class=" post_tag button button_translucent">
+          HUGO
+          <span class='button_tally'>2</span>
+        </a>
+        
+        <a href='https://bluestar714.github.io/tags/dns/' class=" post_tag button button_translucent">
+          DNS
+          <span class='button_tally'>1</span>
+        </a>
+        
+        <a href='https://bluestar714.github.io/tags/gcp/' class=" post_tag button button_translucent">
+          GCP
+          <span class='button_tally'>1</span>
+        </a>
+        
+        <a href='https://bluestar714.github.io/tags/github/' class=" post_tag button button_translucent">
+          GITHUB
+          <span class='button_tally'>1</span>
+        </a>
+        
+        <a href='https://bluestar714.github.io/tags/index/' class=" post_tag button button_translucent">
+          INDEX
+          <span class='button_tally'>1</span>
+        </a>
+        
+        <a href='https://bluestar714.github.io/tags/softether/' class=" post_tag button button_translucent">
+          SOFTETHER
+          <span class='button_tally'>1</span>
+        </a>
+        
+        <a href='https://bluestar714.github.io/tags/vpn/' class=" post_tag button button_translucent">
+          VPN
+          <span class='button_tally'>1</span>
+        </a>
+        
+        <a href='https://bluestar714.github.io/tags/%E3%81%8A%E5%90%8D%E5%89%8D.com/' class=" post_tag button button_translucent">
+          お名前.COM
+          <span class='button_tally'>1</span>
+        </a>
+        
+        
+      </nav>
+    </div>
+    
+  </section>
+</aside>
+
+</div>
+    </main><svg width="0" height="0" class="hidden">
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="facebook">
+    <path d="M437 0H75C33.648 0 0 33.648 0 75v362c0 41.352 33.648 75 75 75h151V331h-60v-90h60v-61c0-49.629 40.371-90 90-90h91v90h-91v61h91l-15 90h-76v181h121c41.352 0 75-33.648 75-75V75c0-41.352-33.648-75-75-75zm0 0"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.001 18.001" id="twitter">
+    <path d="M15.891 4.013c.808-.496 1.343-1.173 1.605-2.034a8.68 8.68 0 0 1-2.351.861c-.703-.756-1.593-1.14-2.66-1.14-1.043 0-1.924.366-2.643 1.078a3.56 3.56 0 0 0-1.076 2.605c0 .309.039.585.117.819-3.076-.105-5.622-1.381-7.628-3.837-.34.601-.51 1.213-.51 1.846 0 1.301.549 2.332 1.645 3.089-.625-.053-1.176-.211-1.645-.47 0 .929.273 1.705.82 2.388a3.623 3.623 0 0 0 2.115 1.291c-.312.08-.641.118-.979.118-.312 0-.533-.026-.664-.083.23.757.664 1.371 1.291 1.841a3.652 3.652 0 0 0 2.152.743C4.148 14.173 2.625 14.69.902 14.69c-.422 0-.721-.006-.902-.038 1.697 1.102 3.586 1.649 5.676 1.649 2.139 0 4.029-.542 5.674-1.626 1.645-1.078 2.859-2.408 3.639-3.974a10.77 10.77 0 0 0 1.172-4.892v-.468a7.788 7.788 0 0 0 1.84-1.921 8.142 8.142 0 0 1-2.11.593z"
+      ></path>
+  </symbol>
+  <symbol aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="mail">
+    <path  d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="calendar">
+    <path d="M452 40h-24V0h-40v40H124V0H84v40H60C26.916 40 0 66.916 0 100v352c0 33.084 26.916 60 60 60h392c33.084 0 60-26.916 60-60V100c0-33.084-26.916-60-60-60zm20 412c0 11.028-8.972 20-20 20H60c-11.028 0-20-8.972-20-20V188h432v264zm0-304H40v-48c0-11.028 8.972-20 20-20h24v40h40V80h264v40h40V80h24c11.028 0 20 8.972 20 20v48z"></path>
+    <path d="M76 230h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zM76 310h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zM76 390h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zm80-80h40v40h-40z"></path>
+  </symbol>
+  <symbol viewBox="-21 0 512 512" xmlns="http://www.w3.org/2000/svg" id="yank">
+    <path d="M410.668 405.332H165.332c-32.363 0-58.664-26.3-58.664-58.664v-288c0-32.363 26.3-58.668 58.664-58.668h181.504c21.059 0 41.687 8.535 56.555 23.445l42.496 42.496c15.125 15.125 23.445 35.223 23.445 56.575v224.152c0 32.363-26.3 58.664-58.664 58.664zM165.332 32c-14.7 0-26.664 11.969-26.664 26.668v288c0 14.7 11.965 26.664 26.664 26.664h245.336c14.7 0 26.664-11.965 26.664-26.664V122.516c0-12.82-4.992-24.871-14.059-33.942l-42.496-42.496C371.84 37.121 359.488 32 346.836 32zm0 0"></path>
+    <path d="M314.668 512h-256C26.305 512 0 485.695 0 453.332V112c0-32.363 26.305-58.668 58.668-58.668h10.664c8.832 0 16 7.168 16 16s-7.168 16-16 16H58.668C43.968 85.332 32 97.301 32 112v341.332C32 468.032 43.969 480 58.668 480h256c14.7 0 26.664-11.969 26.664-26.668v-10.664c0-8.832 7.168-16 16-16s16 7.168 16 16v10.664c0 32.363-26.3 58.668-58.664 58.668zM368 181.332H208c-8.832 0-16-7.168-16-16s7.168-16 16-16h160c8.832 0 16 7.168 16 16s-7.168 16-16 16zm0 0"></path>
+    <path d="M368 245.332H208c-8.832 0-16-7.168-16-16s7.168-16 16-16h160c8.832 0 16 7.168 16 16s-7.168 16-16 16zm0 64H208c-8.832 0-16-7.168-16-16s7.168-16 16-16h160c8.832 0 16 7.168 16 16s-7.168 16-16 16zm0 0"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="github">
+    <path d="M255.968 5.329C114.624 5.329 0 120.401 0 262.353c0 113.536 73.344 209.856 175.104 243.872 12.8 2.368 17.472-5.568 17.472-12.384 0-6.112-.224-22.272-.352-43.712-71.2 15.52-86.24-34.464-86.24-34.464-11.616-29.696-28.416-37.6-28.416-37.6-23.264-15.936 1.728-15.616 1.728-15.616 25.696 1.824 39.2 26.496 39.2 26.496 22.848 39.264 59.936 27.936 74.528 21.344 2.304-16.608 8.928-27.936 16.256-34.368-56.832-6.496-116.608-28.544-116.608-127.008 0-28.064 9.984-51.008 26.368-68.992-2.656-6.496-11.424-32.64 2.496-68 0 0 21.504-6.912 70.4 26.336 20.416-5.696 42.304-8.544 64.096-8.64 21.728.128 43.648 2.944 64.096 8.672 48.864-33.248 70.336-26.336 70.336-26.336 13.952 35.392 5.184 61.504 2.56 68 16.416 17.984 26.304 40.928 26.304 68.992 0 98.72-59.84 120.448-116.864 126.816 9.184 7.936 17.376 23.616 17.376 47.584 0 34.368-.32 62.08-.32 70.496 0 6.88 4.608 14.88 17.6 12.352C438.72 472.145 512 375.857 512 262.353 512 120.401 397.376 5.329 255.968 5.329z"></path>
+  </symbol>
+  <symbol viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="rss">
+    <circle cx="3.429" cy="20.571" r="3.429"></circle>
+    <path d="M11.429 24h4.57C15.999 15.179 8.821 8.001 0 8v4.572c6.302.001 11.429 5.126 11.429 11.428z"></path>
+    <path d="M24 24C24 10.766 13.234 0 0 0v4.571c10.714 0 19.43 8.714 19.43 19.429z"></path>
+  </symbol>
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="linkedin">
+    <path d="M437 0H75C33.648 0 0 33.648 0 75v362c0 41.352 33.648 75 75 75h362c41.352 0 75-33.648 75-75V75c0-41.352-33.648-75-75-75zM181 406h-60V196h60zm0-240h-60v-60h60zm210 240h-60V286c0-16.54-13.46-30-30-30s-30 13.46-30 30v120h-60V196h60v11.309C286.719 202.422 296.93 196 316 196c40.691.043 75 36.547 75 79.688zm0 0"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612 612" id="arrow">
+    <path d="M604.501 440.509L325.398 134.956c-5.331-5.357-12.423-7.627-19.386-7.27-6.989-.357-14.056 1.913-19.387 7.27L7.499 440.509c-9.999 10.024-9.999 26.298 0 36.323s26.223 10.024 36.222 0l262.293-287.164L568.28 476.832c9.999 10.024 26.222 10.024 36.221 0 9.999-10.023 9.999-26.298 0-36.323z"></path>
+  </symbol>
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="carly">
+    <path d="M504.971 239.029L448 182.059V84c0-46.317-37.682-84-84-84h-44c-13.255 0-24 10.745-24 24s10.745 24 24 24h44c19.851 0 36 16.149 36 36v108c0 6.365 2.529 12.47 7.029 16.971L454.059 256l-47.029 47.029A24.002 24.002 0 0 0 400 320v108c0 19.851-16.149 36-36 36h-44c-13.255 0-24 10.745-24 24s10.745 24 24 24h44c46.318 0 84-37.683 84-84v-98.059l56.971-56.971c9.372-9.372 9.372-24.568 0-33.941zM112 192V84c0-19.851 16.149-36 36-36h44c13.255 0 24-10.745 24-24S205.255 0 192 0h-44c-46.318 0-84 37.683-84 84v98.059l-56.971 56.97c-9.373 9.373-9.373 24.568 0 33.941L64 329.941V428c0 46.317 37.682 84 84 84h44c13.255 0 24-10.745 24-24s-10.745-24-24-24h-44c-19.851 0-36-16.149-36-36V320c0-6.365-2.529-12.47-7.029-16.971L57.941 256l47.029-47.029A24.002 24.002 0 0 0 112 192z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="copy">
+    <path d="M366.345 406.069H66.207c-9.751 0-17.655-7.904-17.655-17.655V17.655C48.552 7.904 56.456 0 66.207 0h300.138C376.096 0 384 7.904 384 17.655v370.759c0 9.751-7.904 17.655-17.655 17.655z" fill="#f1f4fb"></path>
+    <path d="M384 388.414v-76.992c-.907.322-1.869.494-2.751.882-6.307-6.593-14.733-11.025-24.111-11.964a40.49 40.49 0 0 0-8.448.039v-92.93c0-21.903-17.82-39.723-39.723-39.724a40.5 40.5 0 0 0-4.036.202c-20.012 2.004-35.689 19.916-35.689 40.781v101.773l-21.581 21.581c-15.241 15.241-21.393 36.866-16.456 57.847l3.802 16.16h131.338c9.75 0 17.655-7.905 17.655-17.655z"
+      fill="#d5dced"></path>
+    <circle cx="128" cy="105.931" r="26.483" fill="#b4e66e"></circle>
+    <circle cx="128" cy="203.034" r="26.483" fill="#dae169"></circle>
+    <circle cx="128" cy="300.138" r="26.483" fill="#ffdc64"></circle>
+    <path d="M331.034 229.517H189.793c-4.879 0-8.828-3.953-8.828-8.828s3.948-8.828 8.828-8.828h141.241c4.879 0 8.828 3.953 8.828 8.828s-3.948 8.828-8.828 8.828z" fill="#7f8499"></path>
+    <path d="M295.724 194.207H189.793a8.826 8.826 0 0 1-8.828-8.828 8.826 8.826 0 0 1 8.828-8.828h105.931a8.826 8.826 0 0 1 8.828 8.828 8.826 8.826 0 0 1-8.828 8.828z" fill="#5b5d6e"></path>
+    <path d="M331.034 326.621H189.793c-4.879 0-8.828-3.953-8.828-8.828s3.948-8.828 8.828-8.828h141.241c4.879 0 8.828 3.953 8.828 8.828s-3.948 8.828-8.828 8.828z" fill="#7f8499"></path>
+    <path d="M295.724 291.31H189.793c-4.879 0-8.828-3.953-8.828-8.828s3.948-8.828 8.828-8.828h105.931c4.879 0 8.828 3.953 8.828 8.828s-3.948 8.828-8.828 8.828z" fill="#5b5d6e"></path>
+    <path d="M331.034 132.414H189.793a8.826 8.826 0 0 1-8.828-8.828 8.826 8.826 0 0 1 8.828-8.828h141.241a8.826 8.826 0 0 1 8.828 8.828 8.826 8.826 0 0 1-8.828 8.828z" fill="#7f8499"></path>
+    <path d="M295.724 97.103H189.793a8.826 8.826 0 0 1-8.828-8.828 8.826 8.826 0 0 1 8.828-8.828h105.931a8.826 8.826 0 0 1 8.828 8.828 8.825 8.825 0 0 1-8.828 8.828z" fill="#5b5d6e"></path>
+    <path d="M443.656 335.563c-13.21-1.323-24.345 9.015-24.345 21.954v-7.569c0-11.544-8.306-22.063-19.794-23.213-13.209-1.323-24.344 9.015-24.344 21.954v-7.569c0-11.544-8.306-22.063-19.794-23.213-13.209-1.323-24.344 9.015-24.344 21.954V207.448c0-12.939-11.135-23.277-24.345-21.954-11.486 1.15-19.793 11.669-19.793 23.213v109.086l-26.752 26.752a44.14 44.14 0 0 0-11.754 41.32l18.47 78.495c6.567 27.913 31.475 47.64 60.15 47.64h74.645c34.127 0 61.793-27.666 61.793-61.793v-91.431c-.001-11.544-8.306-22.063-19.793-23.213z"
+      fill="#f0c087"></path>
+    <path d="M339.862 361.377a8.829 8.829 0 0 0 8.828-8.828v-34.194c-10.052 2.061-17.655 10.844-17.655 21.506v12.687a8.827 8.827 0 0 0 8.827 8.829zM384 370.205a8.829 8.829 0 0 0 8.828-8.828v-34.194c-10.052 2.061-17.655 10.844-17.655 21.506v12.687a8.827 8.827 0 0 0 8.827 8.829zm44.138 8.827a8.829 8.829 0 0 0 8.828-8.828V336.01c-10.052 2.061-17.655 10.844-17.655 21.506v12.687a8.827 8.827 0 0 0 8.827 8.829zM288.885 464.36l-20.467-86.985a28.482 28.482 0 0 1 7.585-26.663l10.893-10.894v22.113a8.829 8.829 0 0 0 17.656 0V185.933c-10.344 2.173-17.655 11.972-17.655 22.773v109.087l-26.752 26.752a44.14 44.14 0 0 0-11.754 41.32l18.47 78.495c6.567 27.913 31.475 47.64 60.15 47.64h22.026c-28.677 0-53.584-19.727-60.152-47.64z"
+      fill="#e6af78"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512.001 512.001" id="closeme">
+    <path d="M284.286 256.002L506.143 34.144c7.811-7.811 7.811-20.475 0-28.285-7.811-7.81-20.475-7.811-28.285 0L256 227.717 34.143 5.859c-7.811-7.811-20.475-7.811-28.285 0-7.81 7.811-7.811 20.475 0 28.285l221.857 221.857L5.858 477.859c-7.811 7.811-7.811 20.475 0 28.285a19.938 19.938 0 0 0 14.143 5.857 19.94 19.94 0 0 0 14.143-5.857L256 284.287l221.857 221.857c3.905 3.905 9.024 5.857 14.143 5.857s10.237-1.952 14.143-5.857c7.811-7.811 7.811-20.475 0-28.285L284.286 256.002z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="open-menu">
+    <path d="M492 236H20c-11.046 0-20 8.954-20 20s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20zm0-160H20C8.954 76 0 84.954 0 96s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20zm0 320H20c-11.046 0-20 8.954-20 20s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20z"></path>
+  </symbol>
+</svg>
+<footer class = 'footer'>
+  <div class = 'footer_inner wrap pale'>
+	  
+    <p>Copyright &copy;&nbsp;<span class = 'year'></span>&nbsp;A-MOTION 2.0. All Rights Reserved</p>
+<a class='to_top' href="#documentTop">
+  <svg class="icon">
+    <use xlink:href="#arrow"></use>
+  </svg>
+</a>
+
+  </div>
+</footer>
+
+    <script type="text/javascript" src = "https://bluestar714.github.io/js/bundle.54a378827d9fe7c301b088bb011e21ae213f46838fb0f78bbd53fa7b0c9f813f96e578b1f21ac8f2d5ad8f6f331a3efe46cf018e4cff78d3f8c78b0c13ded597.js" integrity=
+    "sha512-VKN4gn2f58MBsIi7AR4hriE/RoOPsPeLvVP6ewyfgT&#43;W5Xix8hrI8tWtj28zGj7&#43;Rs8Bjkz/eNP4x4sME97Vlw==" crossorigin="anonymous"></script>
+  </body>
+</html>

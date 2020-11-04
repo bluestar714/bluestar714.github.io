@@ -37,6 +37,30 @@ Origin 白井智洋(Tomohiro Shirai), 1992年, 家族の都合で神奈川に生
     </item>
     
     <item>
+      <title>GCP上にSoftEtherを用いてVPN環境を構築</title>
+      <link>https://bluestar714.github.io/post/201104/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://bluestar714.github.io/post/201104/</guid>
+      <description>動機 クラウド環境ってどれも(AWSとGCP)VPN機能はあるが, どれも拠点間VPNでネットワーク機器や既存の環境を持っていない場合、使い勝手が悪いと感じていました.
+一方, クラウド環境にVPSを切り,環境構築を作りその上に踏み台サーバを作ってその中で何かをするのもだるいと感じたので, OpenVPNやSoftEtherを使って全てその中で完結させれば幸せになるのではと考えた次第です.
+(某ROS1だとネットワークセグメント分けると辛いとこあるじゃないですか. そこら辺の良きソリューションは教えていただきたいところではある.)
+やること softehterを用いてL3 VPNをGCP上に構築する.
+SoftEther 登さんが作られたVPN ソフトウェアで, フリーで使えます.(どこかのOpenVPN ASとは大違いですわ)
+結構手軽に構築できます.
+https://ja.softether.org/
+オンプレだとプロミスキャスモード使ってL2 VPN作れるんですが, GCPのようなクラウドでは基本的にはプロミスキャスモードはサポートされていないとのこと.
+せやな.
+すんなり納得.
+https://serverfault.com/questions/997756/gcp-compute-instance-nic-in-promiscuous-mode
+VPN Server側の準備 インスタンスの生成  GCPにてプロジェクトを用意 [Compute Engine] -&amp;gt; [VM インスタンス]内の&amp;quot;インスタンスを作成&amp;quot;をクリック External IPをStaticなものを確保 お名前.comやRoute 53, Cloud DNS等でAレコードで雑に登録(今回はお名前.com)  ファイヤウォールの設定 TCPで使用するport 番号を通すポリシを設定する.
+今回はTCPの5555を開放した.(雑)
+SoftEtherの設定 インストール 下準備です.
+software-commonとかでも良さげ.
+1$ yum --enablerepo=epel 2 --downloadonly 3 --downloaddir=. 4 install 5 gcc 6 gcc-c++ 7 glibc 8 make 9 binutils 10 zlib 11 openssl 12 readline 13 ncurses 14 zlib-devel 15 openssl-devel 16 readline-devel 17 ncurses-devel 18 psmisc 以下のコマンドでSoftEtherのvpn server側のソフトをダウンロードします.</description>
+    </item>
+    
+    <item>
       <title>github pagesとhugoで簡単blog作成</title>
       <link>https://bluestar714.github.io/post/post1/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
